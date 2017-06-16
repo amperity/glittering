@@ -7,7 +7,7 @@ A Clojure wrapper around GraphX, Spark's graph processing library.
 Available from clojars:
 
 ```clojure
-   [glittering "0.1.1"]
+   [amperity/glittering "0.2.0"]
 ```
 
 See the [Clojure Data Science chapter on Graphs](https://github.com/clojuredatascience/ch8-graphs/blob/master/src/cljds/ch8/examples.clj) for usage examples.
@@ -19,32 +19,32 @@ A Clojure implementation of Pregel is provided. Here's an example which uses the
 ```clojure
 (deftest label-propagation
   (spark/with-context sc (-> (g/conf)
-                             (conf/master "local[*]")
-                             (conf/app-name "label-propagation-test"))
+			     (conf/master "local[*]")
+			     (conf/app-name "label-propagation-test"))
     (let [vertex-fn (fn [vertex-id attribute message]
-                      (if (empty? message)
-                        attribute
-                        (key (apply max-key val message))))
-          edge-fn (p/message-fn
-                   (fn [{:keys [src-attr dst-attr]}]
-                     {:src {dst-attr 1}
-                      :dst {src-attr 1}}))
-          edges (spark/parallelize sc (two-cliques 5))
-          labels (->> (g/graph-from-edges edges 1)
-                      (g/map-vertices (fn [vid attr] vid))
-                      (p/pregel {:initial-message {}
-                                 :edge-fn edge-fn
-                                 :combiner (partial merge-with +)
-                                 :vertex-fn vertex-fn
-                                 :max-iterations 10})
-                      (g/vertices)
-                      (spark/collect)
-                      (vec)
-                      (untuple-all)
-                      (group-by second))]
+		      (if (empty? message)
+			attribute
+			(key (apply max-key val message))))
+	  edge-fn (p/message-fn
+		   (fn [{:keys [src-attr dst-attr]}]
+		     {:src {dst-attr 1}
+		      :dst {src-attr 1}}))
+	  edges (spark/parallelize sc (two-cliques 5))
+	  labels (->> (g/graph-from-edges edges 1)
+		      (g/map-vertices (fn [vid attr] vid))
+		      (p/pregel {:initial-message {}
+				 :edge-fn edge-fn
+				 :combiner (partial merge-with +)
+				 :vertex-fn vertex-fn
+				 :max-iterations 10})
+		      (g/vertices)
+		      (spark/collect)
+		      (vec)
+		      (untuple-all)
+		      (group-by second))]
       (testing
-          "returns two cliques"
-        (is (= 2 (-> labels keys count)))))))
+	  "returns two cliques"
+	(is (= 2 (-> labels keys count)))))))
 ```
 
 ## License
