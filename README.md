@@ -7,7 +7,7 @@ A Clojure wrapper around GraphX, Spark's graph processing library.
 Available from clojars:
 
 ```clojure
-   [glittering "0.1.1"]
+   [amperity/glittering "0.2.0"]
 ```
 
 See the [Clojure Data Science chapter on Graphs](https://github.com/clojuredatascience/ch8-graphs/blob/master/src/cljds/ch8/examples.clj) for usage examples.
